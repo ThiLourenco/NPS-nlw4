@@ -3,6 +3,7 @@ import { getCustomRepository } from 'typeorm';
 import { SurveysRepository } from '../repositories/SurveysRepository';
 
 class SurveysController {
+  // Cria uma pesquisa
   async create(req: Request, res: Response) {
   const { title, description } = req.body;
     
@@ -16,7 +17,7 @@ class SurveysController {
 
     return res.status(201).json(survey);
   }
-
+  // Mostra a listagem das pesquisas
   async show(req: Request, res: Response) {
     const surveysRepository = getCustomRepository(SurveysRepository);
 
