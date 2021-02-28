@@ -30,26 +30,29 @@ class SendMailController {
         error: 'Survey does not exists!'
     });
 
+    // mapeando o caminho do template hbs onde será usado as variavél
+    const npsPath = resolve(__dirname, '..', 'views', 'emails', 'npsMail.hbs');
+    
+    // verificando se a pesquisa para usuário já existe 
+    const surveyUserAlreadyExists = await surveysUsersRepository.findOne({
+      // realizando um select na condição de AND, dessa forma seria a condição de OR[{}, {}]
+      where: { user_id: user.id, value: null },
+      relations: ['user', 'survey'],
+    });
+    
     // criando o objeto variavel
     const variables = {
       name: user.name,
       title: survey.title,
       description: survey.description,
-      user_id: user.id,
+      id: '',
       link: process.env.URL_MAIL,
     }
 
-    // mapeando o caminho do template hbs onde será usado as variavél
-    const npsPath = resolve(__dirname, '..', 'views', 'emails', 'npsMail.hbs');
-
-    // verificando se a pesquisa para usuário já existe 
-    const surveyUserAlreadyExists = await surveysUsersRepository.findOne({
-      where: [{ user_id: user.id }, { value: null }],
-      relations: ['user', 'survey'],
-    });
-
     // se existir será enviado a pesquisa existente
     if (surveyUserAlreadyExists) {
+      // se existir o variable.id será sobreescrito o valor
+      variables.id = surveyUserAlreadyExists.id
       await SendMailService.execute(email, survey.title, variables, npsPath);
       return res.json(surveyUserAlreadyExists);
     }
@@ -63,6 +66,9 @@ class SendMailController {
     await surveysUsersRepository.save(surveyUser);
     // Enviar e-mail para o usuário
 
+    // se não existe receberá o id da criação
+    variables.id = surveyUser.id
+    
     await SendMailService.execute(email, survey.title, variables, npsPath);
 
     return res.json(surveyUser);
