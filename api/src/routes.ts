@@ -15,8 +15,8 @@ const npsController = new NpsController();
 
 router.post('/users', userController.create);
 router.post('/surveys', surveysController.create);
-router.get('/surveys', surveysController.show);
 router.post('/sendMail', sendMailController.execute);
+router.get('/surveys', surveysController.show);
 router.get('/answers/:value', answerController.execute);
 router.get('/nps/:survey_id', npsController.execute);
 
