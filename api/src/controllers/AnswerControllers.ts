@@ -22,6 +22,7 @@ class AnswerController {
         error: 'Survey User does not exists!'
       });
     }
+    // se existe, recebe o valor como num
     surveyUser.value = Number(value);
   
     await surveysUsersRepository.save(surveyUser);
