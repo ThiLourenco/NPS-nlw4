@@ -5,6 +5,7 @@ import { SurveysRepository } from '../repositories/SurveysRepository';
 import { SurveysUsersRepository } from '../repositories/SurveysUsersRepository';
 import { UsersRepository } from '../repositories/UsersRepository';
 import SendMailService from '../services/SendMailService';
+import { AppError } from '../errors/appError';
 
 class SendMailController {
   async execute(req: Request, res: Response) {
@@ -18,18 +19,17 @@ class SendMailController {
       email,
     });
 
-    if (!user) return res.status(400).json({ 
-        error: 'User does not exists',
-      });
-  
+    if (!user) { 
+      throw new AppError('User does not exists');
+    }
+
     const survey = await surveysRepository.findOne({
       id: survey_id
     });
 
-    if (!survey) return res.status(400).json({
-        error: 'Survey does not exists!'
-    });
-
+    if (!survey) {
+      throw new AppError('Survey does not exists!');
+    }
     // mapeando o caminho do template hbs onde será usado as variavél
     const npsPath = resolve(__dirname, '..', 'views', 'emails', 'npsMail.hbs');
     
